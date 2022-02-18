@@ -1,7 +1,7 @@
 /*
  * @Author: Tianhao Feng
  * @Date: 2022-02-16 23:53:44
- * @LastEditTime: 2022-02-18 10:26:44
+ * @LastEditTime: 2022-02-18 12:50:24
  * @FilePath: \typescript\typescript-learning\src\7-typeChecking.ts
  * @Description: 
  */
@@ -153,3 +153,55 @@ function xy3 (z: X | Y) {
     console.log(z.x);
   }
 }
+
+//索引类型
+const obj = {
+  a: 1,
+  b: 2,
+  c: 3
+}
+
+function getValues(obj: any, keys: string[]) {
+  return keys.map(key => obj[key])
+}
+
+console.log(getValues(obj, ['a', 'c'])) // 1 3
+console.log(getValues(obj, ['e', 'f'])) // undefined undefined
+
+// keyof T
+interface Obj {
+  a: number
+  b: string
+}
+let keys: keyof Obj
+
+let value: Obj['a'] // number
+
+function getValues2<T, K extends keyof T>(obj: T, keys: K[]): Array<T[K]> {
+  return keys.map(key => obj[key])
+}
+console.log(getValues2(obj, ['a', 'c'])) // 1 3
+// console.log(getValues2(obj, ['e', 'f'])) // 不能将类型“"e"”分配给类型“"a" | "c" | "b"”。
+
+//映射类型
+interface Obj2 {
+  a: number
+  b: string
+  c: boolean
+}
+
+type ReadonlyObj = Readonly<Obj2>
+type OptionalObj = Partial<Obj2>
+type PickObj = Pick<Obj, 'a' | 'b'>
+type RecordObj = Record<'x' | 'y', Obj2>
+
+//条件类型
+type TypeName<T> = T extends string ? string : T extends number ? number : T extends boolean ? boolean : unknown
+type type1 = TypeName<string>
+type type2 = TypeName<number>
+type type3 = TypeName<Obj>
+
+type type4 = TypeName<boolean | number>
+
+type Diff<T, U> = T extends U ? never : T
+type type5 = Diff<'a' | 'b', 'a' | 'x'>
